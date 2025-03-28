@@ -1,0 +1,32 @@
+import java.util.Scanner;
+class dhk {
+private static long power(long a, long b, long p)
+{
+if (b == 1)
+return a;
+else
+return (((long)Math.pow(a, b)) % p);
+}
+public static void main(String[] args)
+{
+long P, G, x, a, b, ka, kb, y;
+Scanner scanner = new Scanner(System.in);
+System.out.print("Enter a prime number P: ");
+P = scanner.nextLong();
+System.out.print("Enter a primitive root G for P: ");
+G = scanner.nextLong();
+System.out.print("Enter Alice's private key (a): ");
+a = scanner.nextLong();
+x = power(G, a, P);
+System.out.println("Alice's public key (x) is: " + x);
+System.out.print("Enter Bob's private key (b): ");
+b = scanner.nextLong();
+y = power(G, b, P);
+System.out.println("Bob's public key (y) is: " + y);
+ka = power(y, a, P); // Secret key for Alice
+kb = power(x, b, P); // Secret key for Bob
+System.out.println("Secret key for Alice: " + ka);
+System.out.println("Secret key for Bob: " + kb);
+scanner.close();
+}
+}

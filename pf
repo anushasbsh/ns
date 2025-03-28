@@ -1,0 +1,79 @@
+import java.util.*;
+
+class Main {
+    static char[][] table = new char[5][5];
+
+    static void setKey(String key) {
+        LinkedHashSet<Character> set = new LinkedHashSet<>();
+        for (char c : (key + "ABCDEFGHIKLMNOPQRSTUVWXYZ").toUpperCase().replace("J", "").toCharArray()) set.add(c);
+        Iterator<Character> it = set.iterator();
+        for (int i = 0; i < 5; i++) for (int j = 0; j < 5; j++) table[i][j] = it.next();
+    }
+    
+    static String encrypt(String text) {
+        text = text.toUpperCase().replaceAll("[^A-Z]", "").replace("J", "I").replaceAll("(.)(?=\\1)", "$1X");
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < text.length(); i += 2) {
+            int[] a = pos(text.charAt(i)), b = pos(text.charAt(i + 1));
+            sb.append(a[0] == b[0] ? table[a[0]][(a[1] + 1) % 5] + "" + table[b[0]][(b[1] + 1) % 5] :
+                    a[1] == b[1] ? table[(a[0] + 1) % 5][a[1]] + "" + table[(b[0] + 1) % 5][b[1]] :
+                    table[a[0]][b[1]] + "" + table[b[0]][a[1]]);
+        }
+        return sb.toString(); 
+    }
+
+    static int[] pos(char c) {
+        for (int i = 0; i < 5; i++) for (int j = 0; j < 5; j++) if (table[i][j] == c) return new int[]{i, j};
+        return null;
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Enter key: ");
+        setKey(sc.nextLine());
+        System.out.print("Enter plain text: ");
+        System.out.println("Cipher Text: " + encrypt(sc.nextLine()));
+    }
+}
+
+
+import java.util.*;
+
+class Main {
+    static char[][] table = new char[5][5];
+
+    static void setKey(String key) {
+        LinkedHashSet<Character> set = new LinkedHashSet<>();
+        for (char c : (key + "ABCDEFGHIKLMNOPQRSTUVWXYZ").toUpperCase().replace("J", "").toCharArray()) set.add(c);
+        Iterator<Character> it = set.iterator();
+        for (int i = 0; i < 5; i++) for (int j = 0; j < 5; j++) table[i][j] = it.next();
+    }
+
+    static String decrypt(String text) {
+        StringBuilder sb = new StringBuilder();
+        text = text.toUpperCase().replaceAll("[^A-Z]", "").replace("J", "I"); 
+        for (int i = 0; i < text.length(); i += 2) {
+            if (i + 1 >= text.length()) break;
+            int[] a = pos(text.charAt(i)), b = pos(text.charAt(i + 1));
+            if (a == null || b == null) continue;
+            sb.append(a[0] == b[0] ? table[a[0]][(a[1] + 4) % 5] + "" + table[b[0]][(b[1] + 4) % 5] :
+                    a[1] == b[1] ? table[(a[0] + 4) % 5][a[1]] + "" + table[(b[0] + 4) % 5][b[1]] :
+                    table[a[0]][b[1]] + "" + table[b[0]][a[1]]);
+        }
+        return sb.toString();
+    }
+
+    static int[] pos(char c) {
+        for (int i = 0; i < 5; i++) for (int j = 0; j < 5; j++) if (table[i][j] == c) return new int[]{i, j};
+        return null;
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Enter key: ");
+        setKey(sc.nextLine());
+        System.out.print("Enter cipher text: ");
+        String text = sc.nextLine();
+        System.out.println("Decrypted Text: " + decrypt(text));
+    }
+}

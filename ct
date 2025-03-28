@@ -1,0 +1,96 @@
+import java.util.*;
+public class cte{
+public static void main(String[]args){
+Scanner scanner=new Scanner(System.in);
+System.out.print("Enter the message to encrypt: ");
+String msg=scanner.nextLine().replaceAll("\\s","");
+System.out.print("Enter the key (word): ");
+String key=scanner.nextLine();
+String cipher=encryptMessage(msg,key);
+System.out.println("Encrypted Message: "+cipher);
+scanner.close();
+}
+static String encryptMessage(String msg,String key){
+int col=key.length();
+int row=(int)Math.ceil((double)msg.length()/col);
+char[][]matrix=new char[row][col];
+int k=0;
+for(int i=0;i<row;i++){
+for(int j=0;j<col;j++){
+if(k<msg.length()){
+matrix[i][j]=msg.charAt(k);
+}else{
+matrix[i][j]='_';
+}
+k++;
+}}
+Integer[]colOrder=getColumnOrder(key);
+StringBuilder cipher=new StringBuilder();
+for(int i=0;i<col;i++){
+int colIndex=colOrder[i];
+for(int j=0;j<row;j++){
+cipher.append(matrix[j][colIndex]);
+}}
+return cipher.toString();
+}
+static Integer[]getColumnOrder(String key){
+Character[]keyChars=new Character[key.length()];
+for(int i=0;i<key.length();i++){
+keyChars[i]=key.charAt(i);
+}
+Arrays.sort(keyChars);
+Integer[]colOrder=new Integer[key.length()];
+for(int i=0;i<key.length();i++){
+colOrder[i]=key.indexOf(keyChars[i]);
+}
+return colOrder;
+}}
+
+import java.util.*;
+public class ctd {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter the encrypted message: ");
+        String cipher = scanner.nextLine();
+        System.out.print("Enter the key (word): ");
+        String key = scanner.nextLine();
+        
+        if (key.isEmpty()) {
+            System.out.println("Key cannot be empty.");
+            return;
+        }
+        
+        System.out.println("Decrypted Message: " + decryptMessage(cipher, key));
+        scanner.close();
+    }
+
+    static String decryptMessage(String cipher, String key) {
+        int col = key.length();
+        int row = (int) Math.ceil((double) cipher.length() / col);
+        char[][] matrix = new char[row][col];
+        Integer[] colOrder = getColumnOrder(key);
+        int k = 0;
+        
+        for (int i = 0; i < col; i++) {
+            int colIndex = colOrder[i];
+            for (int j = 0; j < row && k < cipher.length(); j++) {
+                matrix[j][colIndex] = cipher.charAt(k++);
+            }
+        }
+
+        StringBuilder msg = new StringBuilder();
+        for (int i = 0; i < row; i++)
+            for (int j = 0; j < col; j++)
+                if (matrix[i][j] != 0) msg.append(matrix[i][j]);
+
+        return msg.toString();
+    }
+
+    static Integer[] getColumnOrder(String key) {
+        Map<Character, Integer> map = new TreeMap<>();
+        for (int i = 0; i < key.length(); i++)
+            map.putIfAbsent(key.charAt(i), i);
+        
+        return map.values().toArray(new Integer[0]);
+    }
+}

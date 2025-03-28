@@ -1,0 +1,36 @@
+import java.io.*;
+import java.util.*; 
+import javax.crypto.*;
+
+class dese {
+    public static void main(String[] args) throws Exception {
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Enter plaintext: ");
+        String plaintext = sc.nextLine();
+        SecretKey key = KeyGenerator.getInstance("DES").generateKey();
+        try (ObjectOutputStream keyOut = new ObjectOutputStream(new FileOutputStream("keyfile"))) {
+            keyOut.writeObject(key);
+        }
+        Cipher cipher = Cipher.getInstance("DES");
+        cipher.init(Cipher.ENCRYPT_MODE, key);
+        System.out.println("Encrypted Text: " + Base64.getEncoder().encodeToString(cipher.doFinal(plaintext.getBytes())));
+    }
+}
+
+import java.io.*;
+import java.util.*; 
+import javax.crypto.*;
+
+class desd {
+    public static void main(String[] args) throws Exception {
+        Scanner sc = new Scanner(System.in);
+        SecretKey key;
+        try (ObjectInputStream keyIn = new ObjectInputStream(new FileInputStream("keyfile"))) {
+            key = (SecretKey) keyIn.readObject();
+        }
+        System.out.print("Enter encrypted text: ");
+        Cipher cipher = Cipher.getInstance("DES");
+        cipher.init(Cipher.DECRYPT_MODE, key);
+        System.out.println("Decrypted Text: " + new String(cipher.doFinal(Base64.getDecoder().decode(sc.nextLine()))));
+    }
+}
